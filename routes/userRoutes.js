@@ -375,26 +375,22 @@ userRoutes.get("/limeitedinfousers", (req, res) => {
     });
 });
 
-userRoutes.get("/follow-check", (req, res) => {
-  const followerId = req.query.currentUserId; // دریافت ID کاربر جاری از query string
-  const targetUserId = req.query.targetUserId; // دریافت ID کاربر هدف از query string
+userRoutes.get("/follow-check", authenticateToken, (req, res) => {
+  const followerId = req.user.id; // ID کاربر جاری که وارد شده است
+  const targetUserId = req.query.targetUserId; // ID کاربر هدف برای بررسی فالو کردن
 
   // ارسال درخواست به MockAPI برای بررسی فالو کردن
   axios
     .get(`${followuser}?follower_id=${followerId}&following_id=${targetUserId}`)
     .then((response) => {
-      // اگر داده‌ای وجود نداشت، مقدار isFollowing را false قرار دهید
-      const isFollowing = response.data && response.data.length > 0;
+      const isFollowing = response.data.length > 0; // اگر رکوردی موجود باشد، یعنی فالو می‌کند
       res.json({ isFollowing }); // ارسال نتیجه به کلاینت
     })
     .catch((error) => {
-      console.error("Error checking follow status from MockAPI:", error.message);
-      // ارسال خطای مناسب به کلاینت به جای خطای 500 عمومی
-      res.status(500).json({ error: "Server error. Could not check follow status." });
+      console.error("Error checking follow status from MockAPI:", error);
+      res.status(500).send("Server error");
     });
 });
-
-
 
 userRoutes.post("/follow", (req, res) => {
   const { targetUserId, currentUserId } = req.body; // شناسه کاربری که قرار است دنبال شود و شناسه کاربر فعلی
