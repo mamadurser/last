@@ -376,8 +376,8 @@ userRoutes.get("/limeitedinfousers", (req, res) => {
 });
 
 userRoutes.get("/follow-check", (req, res) => {
-  const followerId = req.body.id; 
-  const targetUserId = req.body.targetUserId; // ID کاربر هدف برای بررسی فالو کردن
+  const followerId = req.query.currentUserId; // دریافت ID کاربر جاری از query string
+  const targetUserId = req.query.targetUserId; // دریافت ID کاربر هدف از query string
 
   // ارسال درخواست به MockAPI برای بررسی فالو کردن
   axios
@@ -391,6 +391,7 @@ userRoutes.get("/follow-check", (req, res) => {
       res.status(500).send("Server error");
     });
 });
+
 
 userRoutes.post("/follow", (req, res) => {
   const { targetUserId, currentUserId } = req.body; // شناسه کاربری که قرار است دنبال شود و شناسه کاربر فعلی
