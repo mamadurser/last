@@ -35,6 +35,7 @@ const setupSocket = (io) => {
           sender_id: sender,
           group_name: groupName,
           content: message,
+          receiver_id : ''
         });
 
         // Emit message to all users in the group
